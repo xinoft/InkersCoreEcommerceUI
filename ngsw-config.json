@@ -1,0 +1,20 @@
+{
+  "$schema": "./node_modules/@angular/service-worker/config/schema.json",
+  "index": "/index.html",
+  "assetGroups": [
+    {
+      "name": "application-shell",
+      "installMode": "prefetch",
+      "resources": {
+        "files": ["/index.html", "/manifest.webmanifest", "/*.js", "/*.css", "/icons/**", "/assets/css/**", "/assets/fonts/**", "/assets/js/**"]
+      }
+    },
+    {
+      "name": "template-images",
+      "installMode": "lazy",
+      "updateMode": "prefetch",
+      "resources": { "files": ["/assets/images/**", "/favicon.ico"] }
+    }
+  ],
+  "navigationUrls": ["/", "/index.html", "/home", "/home-fashion.html", "/products", "/shop.html", "/product-details", "/product-single-default.html", "/cart", "/cart.html", "/checkout", "/checkout-delivery-step-one.html"]
+}

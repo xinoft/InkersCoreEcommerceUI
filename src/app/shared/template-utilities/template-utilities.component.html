@@ -1,0 +1,102 @@
+@switch (kind()) {
+@case ('rbt-preloader') {
+<div class="rbt-preloader">
+    <div class="rbt-preloader-inner">
+        <svg class="rbt-preloader-cart" role="img" aria-label="Shopping cart line animation" viewBox="0 0 128 128" width="128px" height="128px" xmlns="http://www.w3.org/2000/svg">
+            <g fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="8">
+                <g class="rbt-preloader-cart-track" stroke="hsla(0,10%,10%,0.1)">
+                    <polyline points="4,4 21,4 26,22 124,22 112,64 35,64 39,80 106,80"></polyline>
+                    <circle cx="43" cy="111" r="13"></circle>
+                    <circle cx="102" cy="111" r="13"></circle>
+                </g>
+                <g class="rbt-preloader-cart-lines" stroke="currentColor">
+                    <polyline class="rbt-preloader-cart-top" points="4,4 21,4 26,22 124,22 112,64 35,64 39,80 106,80" stroke-dasharray="338 338" stroke-dashoffset="-338"></polyline>
+                    <g class="rbt-preloader-cart-wheel1" transform="rotate(-90,43,111)">
+                        <circle class="rbt-preloader-cart-wheel-stroke" cx="43" cy="111" r="13" stroke-dasharray="81.68 81.68" stroke-dashoffset="81.68"></circle>
+                    </g>
+                    <g class="rbt-preloader-cart-wheel2" transform="rotate(90,102,111)">
+                        <circle class="rbt-preloader-cart-wheel-stroke" cx="102" cy="111" r="13" stroke-dasharray="81.68 81.68" stroke-dashoffset="81.68"></circle>
+                    </g>
+                </g>
+            </g>
+        </svg>
+        <div class="preloader-text">
+            <p class="preloader-msg">Gearing up something amazing for you…</p>
+            <p class="preloader-msg preloader-msg--last">Still waiting? Magic takes a moment! ✨</p>
+        </div>
+    </div>
+</div>
+}
+@case ('rbt-toolbar') {
+<div class="rbt-toolbar rbt-toolbar--bottom d-block d-xl-none">
+    <div class="container p--0">
+        <div class="row row row--0">
+            <div class="col-md-12">
+                <ul class="rbt-quick-access onepagenav">
+                    <li class="rbt-access-box">
+                        <a href="shop.html" class="rbt-round-btn has-rbt-md-fsize">
+                            <i class="fa-regular fa-bag-shopping"></i>
+                            <span class="rbt-toolbar-label"> Shop</span>
+                        </a>
+                    </li>
+
+                    <li class="rbt-access-box rbt-wishlist">
+                        <a class="rbt-round-btn has-rbt-md-fsize" href="#!" data-bs-toggle="modal" data-bs-target="#wishlistModal">
+                            <i class="fa-regular fa-heart"></i>
+                            <div class="access-box-count">3</div>
+                            <span class="rbt-toolbar-label"> Wishist</span>
+                        </a>
+                    </li>
+
+                    <li class="rbt-access-box">
+                        <a class="rbt-common-search-trigger-active rbt-round-btn has-rbt-md-fsize rbt-modern-close-btn" href="index.html">
+                            <i class="fa-regular fa-house search-icon"></i>
+                            <div class="modern-close-wrapper"></div>
+                            <span class="rbt-toolbar-label"> Home</span>
+                        </a>
+                    </li>
+
+
+
+                    <li class="rbt-access-box">
+                        <a href="compare.html" class="rbt-round-btn has-rbt-md-fsize">
+                            <i class="fa-regular fa-code-compare"></i>
+                            <div class="access-box-count">4</div>
+                            <span class="rbt-toolbar-label"> Compare</span>
+                        </a>
+                    </li>
+
+                    <li class="rbt-access-box">
+                        <a href="#!" class="rbt-round-btn has-rbt-md-fsize" data-bs-toggle="modal" data-bs-target="#signinModal">
+                            <i class="fa-regular fa-user"></i>
+                            <span class="rbt-toolbar-label"> Profile</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+}
+@case ('rbt-toaster') {
+@if (variant() === 'home' || variant() === 'product-list' || variant() === 'product-details' || variant() === 'cart' || variant() === 'checkout') {
+<div class="rbt-toaster rbt-toaster-compare" role="alert" aria-atomic="true" aria-live="assertive"><i class="fa-regular fa-check mr--8"></i>Added in Compare</div>
+}
+@else {
+<div class="rbt-toaster rbt-toaster-wishlist" role="alert" aria-atomic="true" aria-live="assertive"><i class="fa-regular fa-check mr--8"></i>Added in Wishlist</div>
+}
+}
+@case ('rbt-progress-parent') {
+<div class="rbt-progress-parent">
+    <svg class="rbt-back-circle svg-inner" width="100%" height="100%" viewBox="-1 -1 102 102">
+        <path d="M50,1 a49,49 0 0,1 0,98 a49,49 0 0,1 0,-98"></path>
+    </svg>
+</div>
+}
+@case ('close_side_menu') {
+<a class="close_side_menu catagories-close_side_menu" href="#"></a>
+}
+@case ('common-close_search_dropdown') {
+<a href="#" class="common-close_search_dropdown"></a>
+}
+}

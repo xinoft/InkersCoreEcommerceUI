@@ -1,0 +1,199 @@
+{
+  "pages": [
+    {
+      "name": "home",
+      "file": "home-fashion",
+      "title": "Home Fashion"
+    },
+    {
+      "name": "product-list",
+      "file": "shop",
+      "title": "Shop"
+    },
+    {
+      "name": "product-details",
+      "file": "product-single-default",
+      "title": "Product Details"
+    },
+    {
+      "name": "cart",
+      "file": "cart",
+      "title": "Cart"
+    },
+    {
+      "name": "checkout",
+      "file": "checkout-delivery-step-one",
+      "title": "Checkout Delivery Details"
+    }
+  ],
+  "shared": [
+    {
+      "component": "header-navigation",
+      "kinds": [
+        {
+          "kind": "header",
+          "variants": 2
+        }
+      ]
+    },
+    {
+      "component": "template-utilities",
+      "kinds": [
+        {
+          "kind": "rbt-preloader",
+          "variants": 1
+        },
+        {
+          "kind": "rbt-toolbar",
+          "variants": 1
+        },
+        {
+          "kind": "rbt-toaster",
+          "variants": 2
+        },
+        {
+          "kind": "rbt-progress-parent",
+          "variants": 1
+        },
+        {
+          "kind": "close_side_menu",
+          "variants": 1
+        },
+        {
+          "kind": "common-close_search_dropdown",
+          "variants": 1
+        }
+      ]
+    },
+    {
+      "component": "side-navigation",
+      "kinds": [
+        {
+          "kind": "mobile",
+          "variants": 1
+        },
+        {
+          "kind": "categories",
+          "variants": 1
+        },
+        {
+          "kind": "special-offers",
+          "variants": 1
+        }
+      ]
+    },
+    {
+      "component": "side-cart",
+      "kinds": [
+        {
+          "kind": "cart",
+          "variants": 1
+        }
+      ]
+    },
+    {
+      "component": "template-overlays",
+      "kinds": [
+        {
+          "kind": "comparison-message",
+          "variants": 1
+        },
+        {
+          "kind": "addedcomparisonModal",
+          "variants": 1
+        },
+        {
+          "kind": "instaModal",
+          "variants": 1
+        },
+        {
+          "kind": "findstoreModal",
+          "variants": 1
+        },
+        {
+          "kind": "quickviewModal",
+          "variants": 1
+        },
+        {
+          "kind": "popup-cartModal",
+          "variants": 1
+        },
+        {
+          "kind": "quickviewSizeGuideModal",
+          "variants": 1
+        },
+        {
+          "kind": "quickViewRestockModal",
+          "variants": 1
+        },
+        {
+          "kind": "wishlistModal",
+          "variants": 1
+        },
+        {
+          "kind": "addedcartModal",
+          "variants": 1
+        },
+        {
+          "kind": "compareviewModal",
+          "variants": 2
+        },
+        {
+          "kind": "socialShareModal",
+          "variants": 1
+        },
+        {
+          "kind": "quickviewEditCartModal",
+          "variants": 1
+        },
+        {
+          "kind": "signinModal",
+          "variants": 1
+        },
+        {
+          "kind": "signupModal",
+          "variants": 1
+        },
+        {
+          "kind": "demos-modal",
+          "variants": 1
+        },
+        {
+          "kind": "recent-viewModal",
+          "variants": 1
+        },
+        {
+          "kind": "notifyModal",
+          "variants": 1
+        }
+      ]
+    },
+    {
+      "component": "footer",
+      "kinds": [
+        {
+          "kind": "footer",
+          "variants": 2
+        }
+      ]
+    },
+    {
+      "component": "customer-reviews",
+      "kinds": [
+        {
+          "kind": "reviews",
+          "variants": 1
+        }
+      ]
+    },
+    {
+      "component": "similar-products",
+      "kinds": [
+        {
+          "kind": "products",
+          "variants": 1
+        }
+      ]
+    }
+  ]
+}
