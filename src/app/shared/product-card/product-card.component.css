@@ -1,0 +1,14 @@
+:host { display: contents; }
+.catalog-code, .catalog-summary { font-size: 14px; margin: 8px 0; overflow-wrap: anywhere; }
+.catalog-reveal { animation: catalog-reveal .4s ease-out; }
+details { padding: 12px 24px 24px; overflow-wrap: anywhere; }
+summary { cursor: pointer; font-size: 14px; }
+.catalog-fields, .catalog-description, .catalog-files { font-size: 14px; margin-top: 12px; }
+.catalog-fields dd { margin-bottom: 8px; }
+.catalog-files { padding-left: 18px; }
+.catalog-files small { display: block; }
+.catalog-files video { width: 100%; }
+@keyframes catalog-reveal { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+@media (prefers-reduced-motion: reduce) { .catalog-reveal { animation: none; } }
+
+.rbt-card-img .rbt-prd-img { aspect-ratio: 1246 / 976; width: 100%; object-fit: contain; }

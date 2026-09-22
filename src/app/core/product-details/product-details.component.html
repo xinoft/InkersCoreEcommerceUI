@@ -1,3 +1,5 @@
+@let selectedProduct = state().product;
+@if (state().message) { <div class="container py-3" role="status">{{state().message}}</div> }
 <h1 class="visually-hidden">Product Single Default</h1>
 
 <app-header-navigation kind="header" variant="product-details"></app-header-navigation>
@@ -301,20 +303,11 @@
                             </a>
                         </div>
                         <a href="shop-by-category.html" class="rbt-card-subtitle rbt-card-catagories-text mt--16">Headphones</a>
-                        <h2 class="rbt-card-title mt--12">Beats Wireless Earbuds with Charging Case - Bluetooth In-Ear
-                            Headphones
-                        </h2>
-                        <p class="description-text b2 mt--16">
-                            At vero eos et accusamus et iusto dignissimos ducimus blanditiis <br> praesentium voluptatu
-                            atque...
-                        </p>
+                        <h2 class="rbt-card-title mt--12">{{ selectedProduct?.name || "Product details" }}</h2>
+                        <p class="description-text b2 mt--16">{{ selectedProduct?.shortDescription }}</p>
                         <div class="rbt-info-wrapper d-flex justify-content-between mt--16">
                             <div class="rbt-store-price-1">
-                                <div class="pricing-part mt--0">
-                                    <del class="price-text">$295.00</del>
-                                    <span class="price-text">$179.98</span>
-                                    <span class="rbt-offer-badge rbt-offer-badge-md">Save 30%</span>
-                                </div>
+                                <div class="pricing-part mt--0"><app-product-price [product]="selectedProduct"></app-product-price></div>
                             </div>
                             <div class="rbt-quick-access-banner-action-btn d-flex align-items-center">
                                 <button class="rbt-btn rbt-btn-xs rbt-btn-secondary d-flex align-items-center" data-bs-toggle="modal" data-bs-target="#findstoreModal">
@@ -365,7 +358,7 @@
                             <div class="prd-info-section">
                                 <div class="prd-id-text">
                                     <p class="text-bold">SKU:</p>
-                                    <p> HN-508801</p>
+                                    <p>{{ selectedProduct?.code }}</p>
                                 </div>
                             </div>
                             <div class="prd-info-section has-left-separator">
@@ -3064,17 +3057,15 @@
                         </a>
                     </div>
                     <div class="rbt-content">
-                        <h2 class="rbt-title mb--0 rbt-text-bold h6"><a href="product-single-default.html">2021 Apple
-                                12.9-inch iPad Pro Wi-Fi 512GB Gray Space</a></h2>
-                        <p class="rbt-desc">Accessibility Statement Wi-Fi 512GB Gray Space....</p>
+                        <h2 class="rbt-title mb--0 rbt-text-bold h6">{{ selectedProduct?.name }}</h2>
+                        <p class="rbt-desc">{{selectedProduct?.shortDescription}}</p>
                     </div>
                 </div>
             </div>
             <div class="col-lg-2 col-md-12 mt--12 mt_sm--16">
                 <div class="rbt-minicart-bottom-section-center justify-content-center d-flex">
                     <div class="pricing-part">
-                        <del class="price-text rbt-text-semi-bold rbt-text-color-gray-400">$295.00</del>
-                        <span class="price-text rbt-text-bold rbt-text-color-heading">$179.98</span>
+                        <app-product-price [product]="selectedProduct"></app-product-price>
                     </div>
                 </div>
             </div>
@@ -3094,9 +3085,9 @@
 
 <app-footer kind="footer" variant="product-details"></app-footer>
 
-<app-template-overlays kind="signinModal" variant="product-details"></app-template-overlays>
+<app-login></app-login>
 
-<app-template-overlays kind="signupModal" variant="product-details"></app-template-overlays>
+
 
 <app-template-overlays kind="demos-modal" variant="product-details"></app-template-overlays>
 

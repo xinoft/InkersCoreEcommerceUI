@@ -1,0 +1,4 @@
+<button type="button" class="rbt-btn rbt-btn-border rbt-btn-sm rbt-square-btn d-block has-left-icon rbt-cart-sidenav-activation w-100" [disabled]="product().stockCount < 1 || cart.loading()" (click)="add($event)">
+  <i class="fa-regular fa-cart-shopping"></i> {{ product().stockCount > 0 ? 'Add To Cart' : 'Out of stock' }}
+</button>
+@if (feedback()) { <p role="status">{{ feedback() }}</p> }

@@ -1,3 +1,5 @@
+import { inject } from '@angular/core';
+import { CartService } from '../services/cart.service';
 import { Component, ChangeDetectionStrategy, input } from '@angular/core';
 import { StorefrontPage } from '../models/storefront-page';
 
@@ -10,6 +12,7 @@ import { StorefrontPage } from '../models/storefront-page';
  preserveWhitespaces: true,
 })
 export class HeaderNavigationComponent {
+ readonly cart = inject(CartService);
  readonly variant = input<StorefrontPage>('home');
  readonly kind = input('');
 }

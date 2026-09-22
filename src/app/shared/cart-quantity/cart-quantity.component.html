@@ -1,0 +1,5 @@
+<div class="rbt-qty-area rbt-qty-sm">
+  <button type="button" class="qty-item-btn qty-item-btn-decr" [attr.aria-label]="'Decrease quantity of ' + line().product.name" [disabled]="line().quantity <= 1 || cart.loading()" (click)="change($event, line().quantity - 1)"><i class="fa-solid fa-minus"></i></button>
+  <input type="number" class="items-qty-input" [attr.aria-label]="'Quantity of ' + line().product.name" [value]="line().quantity" min="1" [max]="line().product.stockCount" step="1" [disabled]="cart.loading()" (change)="typed($event)">
+  <button type="button" class="qty-item-btn qty-item-btn-incr" [attr.aria-label]="'Increase quantity of ' + line().product.name" [disabled]="line().quantity >= line().product.stockCount || cart.loading()" (click)="change($event, line().quantity + 1)"><i class="fa-solid fa-plus"></i></button>
+</div>

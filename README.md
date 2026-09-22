@@ -1,6 +1,6 @@
 # InkersCoreEcommerceUI
 
-Angular **22.1.7** / CLI **22.1.8** PWA, rebuilt with the requested `CoreModule` and `SharedModule`. Every component has its own folder containing its TypeScript, HTML and CSS files. The original `Template` folder and ERP applications are unchanged.
+Angular **22.1.7** / CLI **22.1.8** PWA, rebuilt with the requested `CoreModule` and `SharedModule`. Every component has its own folder containing its TypeScript, HTML and CSS files. The original `Template` folder is unchanged. Public categories are provided by the ERP API.
 
 ## Start the application
 
@@ -53,6 +53,9 @@ src/app/
       checkout.component.css
   shared/
     shared.module.ts
+    category-navigation/
+    product-catalog/
+    product-card/
     header-navigation/
     side-navigation/
     side-cart/
@@ -69,6 +72,56 @@ src/app/
 `CoreModule` is lazy loaded and declares the five page components. `SharedModule` declares and exports the shared UI components. Shared components accept typed page variants and a section kind where necessary, so the home header/footer and inner-page header/footer can preserve their different original layouts. Repeated reviews, recommendations, modal dialogs and utility controls are also shared.
 
 These are actual NgModules, with non-standalone component declarations. The components use signal inputs, OnPush change detection and Angular's built-in control flow. Templates are compiled Angular HTML, not runtime `innerHTML` or iframe copies. Wrapper elements use `display: contents` to retain the original layout and responsive styling.
+
+## Public ecommerce categories
+
+The header, sticky header and both mobile menu tabs use the shared component in
+`src/app/shared/category-navigation/`. A root-provided service shares one anonymous
+`GET /api/ecommerce/categories` request between these instances. It displays the saved
+category tree and order, supports hover/touch/keyboard submenus, and provides loading,
+empty and retry states. Categories are not cached offline by the service worker.
+
+Start the API with its InkersCore launch profile (HTTPS port 7264), then run `npm start`.
+`proxy.conf.json` forwards `/api/ecommerce/**` to that API; restart the Angular dev server
+after changing the proxy. No login or bearer token is needed. Restart the API after
+building the new controller if an older instance is still running.
+
+For production, forward `/api/ecommerce/*` from the storefront origin to the API, keeping
+that path unchanged. If using another API origin, override the `ECOMMERCE_API_URL`
+injection token and configure the corresponding allowed origin on the API.
+The local PWA preview forwards this public path to `https://localhost:7264` by default;
+set `ECOMMERCE_API_ORIGIN` to change its target. Its relaxed localhost development
+certificate validation is only for this preview server.
+
+Category links navigate to `/products?categoryId=<id>`. The separate `product-catalog`
+component calls `GET /api/ecommerce/products?categoryId=<id>` anonymously and displays
+products assigned to that category or any visible descendant. Omitting the category
+lists all active products, including uncategorized products. Results are not paginated.
+Multiple matching category assignments never duplicate a product. An unknown/hidden
+category returns 404; malformed/nonpositive IDs return 400. Empty categories return 200
+with an empty `items` array. Old requests are cancelled when the selection changes.
+
+The product response contains `categoryId`, `categoryName`, `totalCount`, and `items`.
+Each product provides ID, name, code, slug, short/full descriptions, category assignments,
+stock count, created/updated dates, and public file metadata/URLs. The listing shows these
+fields inside the original template product cards; expand Product information for full
+descriptions and files. Images have a fallback. The original filters, sorting controls,
+pagination, category carousel, badges, example prices/ratings, cart/compare buttons, and
+shipping/specification sections are retained for later integration. Prices, ratings,
+brand specifications, and non-category filters are still template placeholders because
+those APIs do not exist yet. The category checkboxes use the current single-category
+API and include descendant categories. Cart/compare/quick-view retain template behavior. Product details, cart, checkout, and the separate promotional
+category drawer still use template data.
+
+Run product browser checks with `npx playwright test tests/products.spec.ts`.
+The generator preserves the live category and product components.
+`tools/prepare-product-catalog.cjs` restores the complete shop layout and first product
+card from the source template, then binds supported fields. Its two HTML fragments
+contain the category checkbox bindings and additional product information. Dynamic
+product cards initialize and clean up their own slider and tooltip behavior.
+
+Run the category browser checks with `npx playwright test tests/categories.spec.ts`.
+The original-template visual comparison now includes intentional navigation differences.
 
 ## Pages and template sources
 
@@ -136,3 +189,14 @@ node tools/prepare-pwa-icons.cjs
 ```
 
 Generation overwrites migrated page/shared templates and component declarations; preserve intentional Angular edits before rerunning it. Asset preparation copies original assets and recreates the lifecycle adapter. Keep the original `Template` folder alongside this project to use these tools. Ordinary UI changes can be made directly in each component's HTML/CSS/TypeScript files.
+
+
+### Server cart
+
+Reusable components live in shared/add-to-cart, shared/cart-items and shared/cart-quantity, each in its own folder. CartService connects them to /api/ecommerce/cart and synchronizes the header count, side cart and cart page.
+
+Carts are stored by the API. Guests use a random HttpOnly cookie; signed-in customers use their customer session, with guest-cart merge after Google login. Reloads restore the server cart. The API validates stock, positive whole quantities, product availability and cart ownership. It supports add, set quantity, remove, clear and merge. LocalStorage is no longer the cart source.
+
+Apply API migration 20260922131105_AddStorefrontCart before testing. See ../InkersCoreERPAPI/docs/storefront-cart.md for endpoints and setup. Product pricing and checkout/order processing are not available in the current APIs; totals remain unavailable.
+
+Validation: npm test and npx playwright test tests/cart.spec.ts. Template generation preserves cart bindings via tools/prepare-cart.cjs.

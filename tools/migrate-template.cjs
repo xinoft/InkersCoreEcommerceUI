@@ -17,14 +17,31 @@ function html(n) {
  // Escape Angular control-flow characters in static template text; preserve all source elements.
  return serializeOuter(n).replace(/javascript:void\(0\);?/gi,'#').replace(/@/g,'&#64;').replace(/\{/g,'&#123;').replace(/\}/g,'&#125;');
 }
+// Replace template demo menus with the live category component before serialization.
+function replaceCategoryMenus(node, mobile) {
+ for (let index = 0; index < (node.childNodes || []).length; index++) {
+  const child = node.childNodes[index];
+  if (child.tagName === 'nav' && attr(child, 'class').split(' ').includes('rbt-mainmenu-nav')) {
+   const component = parse('<html><body><app-category-navigation' + (mobile ? ' [mobile]="true"' : '') + '></app-category-navigation></body></html>')
+    .childNodes.find(n => n.tagName === 'html').childNodes.find(n => n.tagName === 'body').childNodes[0];
+   component.parentNode = node;
+   node.childNodes[index] = component;
+  } else replaceCategoryMenus(child, mobile);
+ }
+}
 function sharedTag(group,kind,n,page) {
+ if (group === 'header-navigation' || (group === 'side-navigation' && kind === 'mobile')) {
+  replaceCategoryMenus(n, group === 'side-navigation');
+ }
+
  if(!shared.has(group)) shared.set(group,new Map());
  const kinds=shared.get(group);
  if(!kinds.has(kind)) kinds.set(kind,new Map());
  const variants=kinds.get(kind);const markup=Array.isArray(n)?n.map(html).join('\n'):html(n);
  if(!variants.has(markup)) variants.set(markup,[]);
  variants.get(markup).push(page.name);
- return `<app-${group} kind="${kind}" variant="${page.name}"></app-${group}>`;
+ const variant = group === "header-navigation" && page.name === "product-list" ? "home" : page.name;
+ return `<app-${group} kind="${kind}" variant="${variant}"></app-${group}>`;
 }
 for(const page of pages) {
  const doc=parse(fs.readFileSync(path.join(source,page.file+'.html'),'utf8'));
@@ -33,11 +50,14 @@ for(const page of pages) {
  const result=[];
  for(let index=0;index<nodes.length;index++) {
   const n=nodes[index], cls=attr(n,'class'), id=attr(n,'id');
-  if(n.tagName==='header') result.push(sharedTag('header-navigation','header',n,page));
+  if(page.name==='product-list' && cls.includes('rbt-shop-filter-area')) result.push('<app-product-catalog></app-product-catalog>');
+  else if(n.tagName==='header') result.push(sharedTag('header-navigation','header',n,page));
   else if(/popup-mobile-menu|rbt-offcanvas-cat-side-menu|rbt-special-offprds-side-menu/.test(cls)) result.push(sharedTag('side-navigation',cls.includes('popup-mobile')?'mobile':cls.includes('offcanvas-cat')?'categories':'special-offers',n,page));
   else if(cls.includes('rbt-cart-side-menu')) result.push(sharedTag('side-cart','cart',n,page));
   else if(cls.includes('rbt-collapsible-content-section')&&nodes[index+1]?.tagName==='footer') result.push(sharedTag('footer','footer',[n,nodes[++index]],page));
   else if(n.tagName==='footer') result.push(sharedTag('footer','footer',n,page));
+  else if(id === 'signinModal') result.push('<app-login></app-login>');
+  else if(id === 'signupModal') continue;
   else if(/\bmodal\b|rbt-comparison-message-area/.test(cls)) result.push(sharedTag('template-overlays',id||'comparison-message',n,page));
   else if(/rbt-preloader|rbt-toolbar|rbt-toaster|rbt-progress-parent|close_side_menu|common-close_search_dropdown/.test(cls)) result.push(sharedTag('template-utilities',id||cls.split(' ')[0],n,page));
   else if(cls.includes('rbt-countdown-area')&&['cart','checkout'].includes(page.name)) result.push(sharedTag('customer-reviews','reviews',n,page));
@@ -71,7 +91,7 @@ function variantMarkup(variants) {
 for(const [group,kinds] of shared) {
  const folder=path.join(root,'src/app/shared',group);fs.mkdirSync(folder,{recursive:true});
  const markup=kinds.size===1?variantMarkup([...kinds.values()][0]):`@switch (kind()) {\n${[...kinds].map(([kind,variants])=>`@case ('${kind}') {\n${variantMarkup(variants)}\n}`).join('\n')}\n}`;
- fs.writeFileSync(path.join(folder,group+'.component.html'),markup);
+ fs.writeFileSync(path.join(folder,group+'.component.html'),group === 'header-navigation' ? markup.replace(/[ \t]+$/gm, '') : markup);
  fs.writeFileSync(path.join(folder,group+'.component.css'),':host { display: contents; }\n');
  fs.writeFileSync(path.join(folder,group+'.component.ts'),`import { Component, ChangeDetectionStrategy, input } from '@angular/core';
 import { StorefrontPage } from '../models/storefront-page';
@@ -91,15 +111,23 @@ export class ${pascal(group)}Component {
 `);
 }
 const groups=[...shared.keys()];
+const declaredGroups=[...groups, 'category-navigation', 'product-catalog', 'product-card'];
 fs.writeFileSync(path.join(root,'src/app/shared/shared.module.ts'),`import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-${groups.map(g=>`import { ${pascal(g)}Component } from './${g}/${g}.component';`).join('\n')}
+import { RouterModule } from '@angular/router';
+${declaredGroups.map(g=>`import { ${pascal(g)}Component } from './${g}/${g}.component';`).join('\n')}
 
-const COMPONENTS = [${groups.map(g=>pascal(g)+'Component').join(', ')}];
-@NgModule({ declarations: COMPONENTS, imports: [CommonModule], exports: COMPONENTS })
+const COMPONENTS = [${declaredGroups.map(g=>pascal(g)+'Component').join(', ')}];
+@NgModule({ declarations: COMPONENTS, imports: [CommonModule, RouterModule], exports: COMPONENTS })
 export class SharedModule {}
 `);
 fs.mkdirSync(path.join(root,'src/app/shared/models'),{recursive:true});
 fs.writeFileSync(path.join(root,'src/app/shared/models/storefront-page.ts'),`export type StorefrontPage = ${pages.map(p=>`'${p.name}'`).join(' | ')};\n`);
 fs.writeFileSync(path.join(root,'tools/template-inventory.json'),JSON.stringify({pages,shared:groups.map(group=>({component:group,kinds:[...shared.get(group)].map(([kind,v])=>({kind,variants:v.size}))}))},null,2));
 console.log('Converted',pages.length,'pages with',groups.length,'shared components.');
+
+require('./prepare-product-catalog.cjs');
+
+require('./prepare-cart.cjs');
+
+require('./prepare-pricing.cjs');

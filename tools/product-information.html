@@ -1,0 +1,26 @@
+<details>
+                        <summary>Product information</summary>
+                        <dl class="catalog-fields">
+                          <dt>Product ID</dt><dd>{{ product.id }}</dd>
+                          <dt>Slug</dt><dd>{{ product.slug }}</dd>
+                          <dt>Created</dt><dd>{{ product.createdTime | date:'medium' }}</dd>
+                          <dt>Updated</dt><dd>{{ product.lastUpdatedTime | date:'medium' }}</dd>
+                        </dl>
+                        @if (product.fullDescription) {
+                          <div class="catalog-description" [innerHTML]="product.fullDescription"></div>
+                        }
+                        @if (product.files.length) {
+                          <h4 class="h6 mt--16">Product files</h4>
+                          <ul class="catalog-files">
+                            @for (file of product.files; track file.id) {
+                              <li>
+                                @if (file.contentType.startsWith('video/')) {
+                                  <video [src]="file.url" controls preload="none" [attr.aria-label]="file.name"></video>
+                                }
+                                <a [href]="file.url" target="_blank" rel="noopener noreferrer">{{ file.name }}</a>
+                                <small>{{ file.contentType }} · {{ file.fileSize | number }} bytes{{ file.isDefault ? ' · Default image' : '' }}</small>
+                              </li>
+                            }
+                          </ul>
+                        }
+                      </details>

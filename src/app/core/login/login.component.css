@@ -1,0 +1,6 @@
+:host { display: contents; }
+.google-signin-host { display: flex; justify-content: center; margin-bottom: 16px; }
+.google-signin-host[hidden] { display: none; }
+.auth-error { color: #a32020; margin: 12px 0; }
+.auth-profile .rbt-input-field-grp { margin-bottom: 16px; }
+button:disabled { opacity: .55; cursor: not-allowed; }

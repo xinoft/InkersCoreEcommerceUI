@@ -1,0 +1,4 @@
+:host { display: contents; }
+.cart-empty, .cart-status { padding: 16px; }
+.thumbnail img, .product-thumbnail img { object-fit: contain; }
+button:disabled { opacity: .55; cursor: not-allowed; }

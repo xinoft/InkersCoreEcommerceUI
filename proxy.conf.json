@@ -1,0 +1,7 @@
+{
+  "/api/ecommerce/**": {
+    "target": "https://localhost:7264",
+    "secure": false,
+    "changeOrigin": true
+  }
+}

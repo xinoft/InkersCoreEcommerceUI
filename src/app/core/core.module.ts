@@ -1,3 +1,5 @@
+import { ReactiveFormsModule } from '@angular/forms';
+import { LoginComponent } from './login/login.component';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Routes } from '@angular/router';
@@ -23,7 +25,7 @@ const routes: Routes = [
   { path: '**', redirectTo: '' },
 ];
 @NgModule({
- declarations: [HomeComponent, ProductListComponent, ProductDetailsComponent, CartComponent, CheckoutComponent],
- imports: [CommonModule, SharedModule, RouterModule.forChild(routes)],
+ declarations: [LoginComponent, HomeComponent, ProductListComponent, ProductDetailsComponent, CartComponent, CheckoutComponent],
+ imports: [ReactiveFormsModule, CommonModule, SharedModule, RouterModule.forChild(routes)],
 })
 export class CoreModule {}

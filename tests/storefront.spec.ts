@@ -1,4 +1,10 @@
+import { mockCart } from './mock-cart';
 import { test, expect, Page } from '@playwright/test';
+
+test.beforeEach(async ({page}) => {
+ await page.route('**/api/ecommerce/categories', route => route.fulfill({json:[]}));
+ await page.route('**/api/ecommerce/products*', route => route.fulfill({json:{categoryId:null,categoryName:null,totalCount:0,items:[]}}));
+});
 
 async function ready(page:Page,route:string) {
  await page.goto(route);
@@ -16,9 +22,7 @@ async function cart(page:Page,mobile=false) {
  const trigger=mobile?'.rbt-header-common-sticky-activation.rbt-sticky .rbt-mini-cart > .rbt-cart-sidenav-activation':'header .rbt-mini-cart .rbt-cart-sidenav-activation:visible';
  await page.locator(trigger).first().click();
  const drawer=page.locator('.rbt-cart-side-menu');await expect(drawer).toHaveClass(/side-menu-active/);
- const qty=drawer.locator('.items-qty-input:visible').first();const area=qty.locator('..');
- await qty.fill('01');await area.locator('.qty-item-btn-decr').click();await expect(qty).toHaveValue('01');
- await area.locator('.qty-item-btn-incr').click();await expect(qty).toHaveValue('02');
+ await expect(drawer).toContainText('Your cart is empty.');
  await drawer.locator('.minicart-close-button').click();await expect(drawer).not.toHaveClass(/side-menu-active/);
 }
 for(const route of ['/home','/products','/product-details','/cart','/checkout']) {
@@ -37,10 +41,14 @@ for(const route of ['/home','/products','/product-details','/cart','/checkout'])
  });
 }
 
-test('cart quantities, checkout input, product gallery and shop filters',async({page})=>{
- const failures=errors(page);await ready(page,'/cart');
+test('cart quantities, checkout input, product gallery and category listing',async({page})=>{
+ const failures=errors(page);
+ const sample = { id: 90, name: 'Cart test product', code: 'CART-90', slug: 'cart-product', stockCount: 5, shortDescription: '', fullDescription: '', createdTime: '', lastUpdatedTime: '', categories: [], files: [] };
+ await mockCart(page, [sample], [{ id: 90, quantity: 1 }]);
+ await page.route('**/api/ecommerce/products*', route => route.fulfill({json:{items:[sample],totalCount:1}}));
+ await ready(page,'/cart');
  const qty=page.locator('app-cart > .rbt-cart-page .items-qty-input').first();
- await qty.fill('01');await qty.locator('..').locator('.qty-item-btn-incr').click();await expect(qty).toHaveValue('02');
+ await expect(qty).toHaveValue('1');await qty.locator('..').locator('.qty-item-btn-incr').click();await expect(qty).toHaveValue('2');
  await page.locator('app-cart > .rbt-cart-page a[href="checkout-delivery-step-one.html"]').last().click();
  await expect(page).toHaveURL(/checkout-delivery-step-one\.html$/);await expect(page.locator('[data-storefront-ready]')).toHaveCount(1);
  await page.locator('#postcode').fill('SH 5AP');await expect(page.locator('#postcode')).toHaveValue('SH 5AP');
@@ -50,9 +58,9 @@ test('cart quantities, checkout input, product gallery and shop filters',async({
  await page.locator('.product-single-slider-two-thumb-activation .swiper-slide-visible').nth(1).locator('button').click();
  await expect.poll(()=>gallery.evaluate((el:any)=>el.swiper.realIndex)).toBe(1);
  await ready(page,'/products');
- await page.locator('label[for="cat-list-1"]').first().click();await expect(page.locator('#cat-list-1').first()).toBeChecked();
- const collapse=page.locator('aside a[href="#rbt-collapse-3"]').first();await collapse.click();
- await expect(page.locator('aside #rbt-collapse-3').first()).not.toHaveClass(/show/);
+ await expect(page.locator('app-product-catalog')).toContainText('Cart test product');
+ await expect(page.locator('app-product-catalog aside').first()).toContainText('Filter & Refine');
+ await expect(page.locator('app-product-catalog aside').first()).toContainText('Customer Reviews');
  await expect(page).toHaveURL(/\/products$/);expect(failures).toEqual([]);
 });
 
@@ -86,3 +94,5 @@ test('PWA installs its service worker and reloads canonical and original routes 
  }finally{await context.close();}
 });
 
+
+test.beforeEach(async ({page}) => { await mockCart(page, []); });

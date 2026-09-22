@@ -1,0 +1,2 @@
+:host { display: contents; }
+button:disabled { opacity: .55; cursor: not-allowed; }

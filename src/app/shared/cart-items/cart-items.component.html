@@ -1,0 +1,46 @@
+@if (cart.items().length) { <button type="button" class="rbt-btn rbt-btn-border rbt-btn-sm mb--16" [disabled]="cart.loading()" (click)="cart.clear()">Clear cart</button> }
+@if (cart.message()) {
+  <div class="cart-status" role="status">
+    <p>{{ cart.message() }}</p>
+    @if (!cart.loading()) { <button type="button" class="rbt-btn rbt-btn-border rbt-btn-sm" (click)="cart.refresh()">Refresh cart</button> }
+  </div>
+}
+@if (cart.loading()) { <p role="status">Loading your cart…</p> }
+@if (!cart.loading() && cart.items().length === 0) {
+  <div class="cart-empty"><p>Your cart is empty.</p><a routerLink="/products" class="rbt-btn rbt-btn-border rbt-btn-sm">Continue shopping</a></div>
+}
+@if (layout() === 'side') {
+  <ul class="rbt-minicart-wrapper">
+    @for (line of cart.items(); track line.product.id) {
+      <li class="minicart-item" [attr.data-cart-product-id]="line.product.id">
+        <div class="thumbnail"><img [src]="cart.image(line.product)" [alt]="line.product.name" (error)="imageFailed($event)"></div>
+        <div class="product-content">
+          <h3 class="title h6">{{ line.product.name }}</h3>
+          <span class="quantity">{{ line.quantity }} × <app-product-price [product]="line.product"></app-product-price></span>
+          <div class="bottom-part"><app-cart-quantity [line]="line"></app-cart-quantity><button class="edit-btn" type="button" (click)="edit($event)"><i class="fa-regular fa-pen"></i> Edit</button></div>
+        </div>
+        <div class="close-btn"><button type="button" class="rbt-round-btn" [attr.aria-label]="'Remove ' + line.product.name" (click)="remove($event, line.product.id)"><i class="fa-solid fa-xmark"></i></button></div>
+      </li>
+    }
+  </ul>
+} @else {
+  <table class="rbt-transparent-table-one table-variation-one mb--0">
+    <thead><tr><th scope="col">Product</th><th scope="col">Price</th><th scope="col">Quantity</th><th scope="col">Total Price</th></tr></thead>
+    <tbody>
+      @for (line of cart.items(); track line.product.id) {
+        <tr [attr.data-cart-product-id]="line.product.id">
+          <td><div class="cart-product-card">
+            <div class="product-thumbnail">
+              <img [src]="cart.image(line.product)" [alt]="line.product.name" (error)="imageFailed($event)">
+              <button type="button" class="close-btn" [attr.aria-label]="'Remove ' + line.product.name" (click)="remove($event, line.product.id)"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="d-flex flex-column"><h3 class="rbt-wish-product-name h6">{{ line.product.name }}</h3><span class="rbt-product-id">SKU: {{ line.product.code }}</span></div>
+          </div></td>
+          <td><app-product-price [product]="line.product"></app-product-price></td>
+          <td><app-cart-quantity [line]="line"></app-cart-quantity></td>
+          <td><span class="price-text h6 d-block">{{ line.lineTotal != null ? (line.lineTotal | currency:'USD':'symbol':'1.2-2') : 'Unavailable' }}</span></td>
+        </tr>
+      }
+    </tbody>
+  </table>
+}

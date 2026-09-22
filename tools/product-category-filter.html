@@ -1,0 +1,16 @@
+<ng-template #categoryFilter let-prefix="prefix">
+  <ul class="rbt-sidebar-list-wrapper rbt-categories-list-check">
+    <li class="rbt-check-group">
+      <input [id]="prefix + '-category-all'" type="checkbox" [checked]="selectedCategory() === null" (change)="chooseCategory(null)">
+      <label [attr.for]="prefix + '-category-all'">All Products</label>
+    </li>
+    @for (category of categoryOptions(); track category.id) {
+      <li class="rbt-check-group" [style.margin-left.px]="category.depth * 12">
+        <input [id]="prefix + '-category-' + category.id" type="checkbox" [checked]="selectedCategory() === category.id" (change)="chooseCategory(selectedCategory() === category.id ? null : category.id)">
+        <label [attr.for]="prefix + '-category-' + category.id">{{ category.name }}<span class="rbt-lable count">{{ state().result?.categoryId === category.id ? '(' + state().result?.totalCount + ')' : '' }}</span></label>
+      </li>
+    }
+    @if (categories.status() === 'loading') { <li role="status">Loading categories…</li> }
+    @else if (categories.status() === 'error') { <li><button type="button" (click)="categories.load()">Retry categories</button></li> }
+  </ul>
+</ng-template>

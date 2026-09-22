@@ -1,0 +1,42 @@
+<nav class="rbt-mainmenu-nav category-navigation" [class.category-mobile]="mobile()"
+     aria-label="Product categories" [attr.aria-busy]="store.status() === 'loading'">
+  <ul class="mainmenu has-nav-bg-shape-hover">
+    <li><a routerLink="/products" (click)="select()">All Products</a></li>
+    <ng-container *ngTemplateOutlet="branches; context: { $implicit: store.categories() }"></ng-container>
+    @if (store.status() === 'loading') {
+      <li class="category-status" role="status">Loading categories…</li>
+    } @else if (store.status() === 'error') {
+      <li class="category-status" role="status">Categories unavailable.
+        <button type="button" class="category-retry" (click)="store.load()">Retry</button>
+      </li>
+    } @else if (store.status() === 'ready' && store.categories().length === 0) {
+      <li class="category-status" role="status">No categories available.</li>
+    }
+  </ul>
+</nav>
+
+<ng-template #branches let-categories>
+  @for (category of categories; track category.id) {
+    <li class="category-item" [class.has-dropdown]="!mobile() && category.children.length > 0"
+        [class.category-branch-open]="expanded().has(category.id)"
+        (mouseenter)="!mobile() && setExpanded(category.id, true)"
+        (mouseleave)="!mobile() && setExpanded(category.id, false)"
+        (focusout)="leaveBranch($event, category.id)">
+      <a routerLink="/products" [queryParams]="{ categoryId: category.id }" (click)="select()">{{ category.name }}</a>
+      @if (category.children.length) {
+        <button #toggle type="button" class="category-toggle"
+                [attr.aria-label]="'Subcategories of ' + category.name"
+                [attr.aria-expanded]="expanded().has(category.id)"
+                (click)="setExpanded(category.id, !expanded().has(category.id))"
+                (keydown.escape)="escape($event, category.id, toggle)">
+          <i class="fa-regular fa-chevron-down" aria-hidden="true"></i>
+        </button>
+        <ul class="category-submenu" [class.submenu]="!mobile()"
+            [attr.inert]="expanded().has(category.id) ? null : ''"
+            (keydown.escape)="escape($event, category.id, toggle)">
+          <ng-container *ngTemplateOutlet="branches; context: { $implicit: category.children }"></ng-container>
+        </ul>
+      }
+    </li>
+  }
+</ng-template>

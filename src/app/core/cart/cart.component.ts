@@ -1,3 +1,5 @@
+import { inject } from '@angular/core';
+import { CartService } from '../../shared/services/cart.service';
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { TemplatePage } from '../template-page';
 
@@ -10,5 +12,6 @@ import { TemplatePage } from '../template-page';
  preserveWhitespaces: true,
 })
 export class CartComponent extends TemplatePage {
+ readonly cart = inject(CartService);
  protected override readonly pageTitle = 'Cart';
 }

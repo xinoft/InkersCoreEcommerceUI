@@ -1,0 +1,7 @@
+@let item = product();
+@if (item?.currentPrice != null) {
+ @if (item!.price != null && item!.currentPrice! < item!.price!) {
+  <del class="price-text">{{ item!.price | currency:'USD':'symbol':'1.2-2' }}</del>
+ }
+ <span class="price-text">{{ item!.currentPrice | currency:'USD':'symbol':'1.2-2' }}</span>
+} @else { <span class="price-text">Price unavailable</span> }
